@@ -11,5 +11,21 @@
   <five:registerPackage package="." initialize=".initialize"/>
   <include file="profiles.zcml" />
 
+  <adapter name="Sharing" factory=".indexers.sharing" />
+
+  <browser:page
+      name="user-rights"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      class=".rights.UserRights"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
+      name="share-rights"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      class=".rights.ShareRights"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>
 

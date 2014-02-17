@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+<head>
+  <metal:css fill-slot="style_slot">
+    <style type="text/css">
+      table { width: 100%; }
+    </style>
+  </metal:css>
+  <metal:block fill-slot="top_slot"
+               tal:define="dummy python:request.set('disable_border',1);" />
+</head>
+<body>
+<metal:content-core fill-slot="portal-columns">
+  <div class="row" id="portal-columns">
+    <div id="portal-column-content" class="cell width-full position-0">
+      <div id="content">
+        <h1 class="documentFirst heading"
+            tal:content="view/title">Title</h1>
+        <div class="documentDescription"
+             tal:content="view/description">Description</div>
+        <div id="content-core">
+          <ul class="formTabs">
+            <li class="formTab firstFormTab">
+              <a href="@@user-rights"
+                 tal:attributes="class python:view.which == 'users' and 'selected' or None"><span i18n:translate="label_users">Users</span> / <span i18n:translate="label_groups">Groups</span></a>
+            </li>
+            <li class="formTab firstFormTab">
+              <a href="@@share-rights"
+                 tal:attributes="class python:view.which == 'shared' and 'selected' or None"><span i18n:translate="">Sharing</span></a>
+            </li>
+          </ul><br/>
+          <table class="listing"
+                 tal:define="table view/results;
+                             thead table/head;
+                             tbody table/body;">
+            <thead>
+              <tr>
+                <tal:items repeat="cell thead">
+                  <th tal:content="cell"/>
+                </tal:items>
+              </tr>
+            </thead>
+            <tbody>
+              <tal:rows repeat="row tbody">
+                <tr tal:define="oddrow repeat/row/odd"
+                    tal:attributes="class python:oddrow and 'even' or 'odd'">
+                  <tal:cells repeat="cell row">
+                    <td tal:content="structure cell"/>
+                  </tal:cells>
+                </tr>
+              </tal:rows>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</metal:content-core>
+</body>
+</html>
+
