@@ -10,7 +10,6 @@ def setupVarious(context):
     if context.readDataFile('vs.rightsoverview_various.txt') is None:
         return
 
-    catalog = getToolByName(context, 'portal_catalog')
-    catalog.manage_catalogReindex()
-
-
+    portal = context.getSite()
+    catalog = getToolByName(portal, 'portal_catalog')
+    catalog.manage_reindexIndex(['Sharing'])

@@ -77,17 +77,18 @@ class ShareRights(Rights):
         for r in results:
             path, url = r.getPath(), r.getURL()
             where = '<a href="%s">%s</a>' % ('/'.join((url, '@@sharing')),
-                                             path.replace('/', '/'))
+                                             path)
 
             for s in r['Sharing']:
-                type, id, title, share = s.split('|')
-                share = [['v', ' ', 'global', 'aquired']['tfga'.find(i)]
-                         for i in share]
-                if 'v' in share:
-                    type = 'Group' if type == 'g' else 'User'
-                    contributor, editor, reader, reviewer = share
-                    body.append([where, title, contributor, editor, reader,
-                                 reviewer])
+                if r['Sharing']:
+                    type, id, title, share = s.split('|')
+                    share = [['v', ' ', 'global', 'aquired']['tfga'.find(i)]
+                             for i in share]
+                    if 'v' in share:
+                        type = 'Group' if type == 'g' else 'User'
+                        contributor, editor, reader, reviewer = share
+                        body.append([where, title, contributor, editor, reader,
+                                     reviewer])
 
         return {'head': head, 'body': body}
 

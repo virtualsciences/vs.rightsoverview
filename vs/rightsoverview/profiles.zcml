@@ -16,7 +16,7 @@
       title="Custom Theme: miscellaneous import steps"
       description="Various import steps that are not handled by GS import/export handlers."
       handler="vs.rightsoverview.setuphandlers.setupVarious">
-    <depends name="skins"/>
+    <depends name="catalog"/>
   </genericsetup:importStep>
 
 </configure>
