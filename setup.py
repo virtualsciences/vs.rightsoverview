@@ -28,5 +28,8 @@ setup(name='vs.rightsoverview',
       ],
       entry_points="""
       # -*- Entry points: -*-
+
+      [z3c.autoinclude.plugin]
+      target = plone
       """,
       )
