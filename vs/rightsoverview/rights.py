@@ -39,10 +39,16 @@ class UserRights(Rights):
         head = ['Who'] + roles
         _tu = '<a href="@@usergroup-userprefs?searchstring=%s">%s</a>'
         _tg = '<a href="@@usergroup-groupprefs?searchstring=%s">%s</a>'
+        # Try to find the user in groups, then try to find the user in users,
+        # first by name, then by id. Then see if the user listed eroniously
+        # (e.g. not found), and finish with creating a url with the fingers
+        # crossed (LDAP users can be none of the above and then have the
+        # default LDAP userrights).
         body = [[u[0] in _groups and _tg % (_groups[u[0]], u[0]) or
                  u[0] in _users and _tu % (_users[u[0]], u[0]) or
                  u[1] in _users and _tu % (_users[u[1]], u[0]) or
-                 u[1].endswith(': not found>') and u[0] + ' *' or u] +
+                 u[1].endswith(': not found>') and u[0] + ' *' or
+                 _tu % (u[1], u[0])] +
                 [(r if u in principals[r] else '') for r in roles]
                 for u in sorted(list(all_users))]
 
