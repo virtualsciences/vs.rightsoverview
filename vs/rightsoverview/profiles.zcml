@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="vs.rightsoverview">
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Rights Overview"
+      directory="profiles/default"
+      description='Extension profile for the "Custom Theme" Plone theme.'
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:importStep
+      name="vs.rightsoverview.various"
+      title="Custom Theme: miscellaneous import steps"
+      description="Various import steps that are not handled by GS import/export handlers."
+      handler="vs.rightsoverview.setuphandlers.setupVarious">
+    <depends name="catalog"/>
+  </genericsetup:importStep>
+
+</configure>
