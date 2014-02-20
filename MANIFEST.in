@@ -1,2 +1,6 @@
+include *.rst
+
+recursive-include docs *
 recursive-include vs *
+
 global-exclude *pyc
