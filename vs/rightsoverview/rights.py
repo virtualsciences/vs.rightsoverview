@@ -16,6 +16,7 @@ class Rights(BrowserView):
     def __call__(self):
         return self.template()
 
+
 class UserRights(Rights):
     '''
     '''
@@ -31,7 +32,8 @@ class UserRights(Rights):
         roles = [r for r in prm.listRoleIds() if r != 'Owner']
         _users = dict([(u.getUserName(), u) for u in acl_users.getUsers()])
         _groups = dict([(u.getUserName(), u) for u in acl_users.getGroups()])
-        principals = dict((r, prm.listAssignedPrincipals(r)) for r in roles)
+        principals = dict(
+            (r, prm._safeListAssignedPrincipals(r)) for r in roles)
         all_users = set()
         for usergroup in principals.values():
             all_users |= set(usergroup)
@@ -53,6 +55,7 @@ class UserRights(Rights):
                 for u in sorted(list(all_users))]
 
         return {'head': head, 'body': body}
+
 
 class ShareRights(Rights):
     ''''''
