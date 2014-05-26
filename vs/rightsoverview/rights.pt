@@ -18,7 +18,11 @@
 <metal:content-core fill-slot="portal-columns">
   <div class="row" id="portal-columns">
     <div id="portal-column-content" class="cell width-full position-0">
-      <div id="content">
+      <div id="content"
+           tal:define="table view/results;
+                       thead table/head;
+                       tbody table/body;
+                       groups table/groups;">
         <h1 class="documentFirst heading"
             tal:content="view/title">Title</h1>
         <div class="documentDescription"
@@ -33,11 +37,9 @@
               <a href="@@share-rights"
                  tal:attributes="class python:view.which == 'shared' and 'selected' or None"><span i18n:translate="">Sharing</span></a>
             </li>
-          </ul><br/>
-          <table class="listing"
-                 tal:define="table view/results;
-                             thead table/head;
-                             tbody table/body;">
+          </ul>
+          <br/>
+          <table class="listing">
             <thead>
               <tr>
                 <tal:items repeat="cell thead">
@@ -56,6 +58,10 @@
               </tal:rows>
             </tbody>
           </table>
+          <p class="discreet">
+            * = user not found
+            <tal:groups repeat="group groups"><br/><tal:group define="i repeat/group/index" content="python:' '.join([str(i + 1), '=', group])"/></tal:groups>
+          </p>
         </div>
       </div>
     </div>
