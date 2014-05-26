@@ -31,30 +31,54 @@ class UserRights(Rights):
         prm = acl_users.portal_role_manager
         roles = [r for r in prm.listRoleIds() if r != 'Owner']
         _users = dict([(u.getUserName(), u) for u in acl_users.getUsers()])
-        _groups = dict([(u.getUserName(), u) for u in acl_users.getGroups()])
+        _groups = dict([(u.getUserName(), u) for u in acl_users.getGroups()
+            if [r for r in u.getRoles() if r != 'Authenticated']])
         principals = dict(
             (r, prm._safeListAssignedPrincipals(r)) for r in roles)
         all_users = set()
         for usergroup in principals.values():
             all_users |= set(usergroup)
 
+        i, groups, gusers = 1, {}, {}
+        for g in _groups.values():
+            groups[g.getGroupId()] = i
+            for uid in [u.id for u in g.getAllGroupMembers()]:
+                _u = gusers.get(uid, {})
+                for r in g.getRoles():
+                    if r in roles:
+                        _u[r] = _u.get(r, []) + [str(i)]
+                if _u:
+                    gusers[uid] = _u
+            i += 1
+
         head = ['Who'] + roles
         _tu = '<a href="@@usergroup-userprefs?searchstring=%s">%s</a>'
         _tg = '<a href="@@usergroup-groupprefs?searchstring=%s">%s</a>'
-        # Try to find the user in groups, then try to find the user in users,
-        # first by name, then by id. Then see if the user listed eroniously
-        # (e.g. not found), and finish with creating a url with the fingers
-        # crossed (LDAP users can be none of the above and then have the
-        # default LDAP userrights).
-        body = [[u[0] in _groups and _tg % (_groups[u[0]], u[0]) or
-                 u[0] in _users and _tu % (_users[u[0]], u[0]) or
-                 u[1] in _users and _tu % (_users[u[1]], u[0]) or
-                 u[1].endswith(': not found>') and u[0] + ' *' or
-                 _tu % (u[1], u[0])] +
-                [(r if u in principals[r] else '') for r in roles]
-                for u in sorted(list(all_users))]
+        _gn = '<sup>%s</sup>'
+        _gr = '<span class="discreet" style="text-align: left;">%s</span>'
+        # Try to find the user in users, first by name, then by id. 
+        # Then see if the user listed eroniously (e.g. not found), and finish 
+        # with creating a url with the fingers crossed (LDAP users can be none 
+        # of the above and then have the default LDAP userrights).
+        user = lambda u: [
+             u[0] in _users and _tu % (_users[u[0]], u[0]) or
+             u[1] in _users and _tu % (_users[u[1]], u[0]) or
+             u[1].endswith(': not found>') and ' '.join((u[0], '*')) or
+             _tu % (u[1], u[0])]
+        # Format with role and the group numbers giving the role for users
+        # getting rights from groups.
+        gr = lambda x, r: _gr % ' '.join([r, _gn % ', '.join(x)]) if x else ''
+        ur = lambda x, r: ' '.join([r, _gn % ', '.join(x)]) if x else r
+        role_list = lambda u: [(
+            ur((gusers.get(u[0], {}) or gusers.get(u[1], {})).get(r, []), r
+                ) if u in principals[r] else 
+            gr((gusers.get(u[0], {}) or gusers.get(u[1], {})).get(r, []), r))
+            for r in roles]
 
-        return {'head': head, 'body': body}
+        body = [user(u) + role_list(u) for u in sorted(list(all_users)) 
+                if u[0] not in _groups]
+
+        return {'head': head, 'body': body, 'groups': groups}
 
 
 class ShareRights(Rights):
