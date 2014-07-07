@@ -22,7 +22,7 @@
            tal:define="table view/results;
                        thead table/head;
                        tbody table/body;
-                       groups table/groups;">
+                       groups table/groups|nothing;">
         <h1 class="documentFirst heading"
             tal:content="view/title">Title</h1>
         <div class="documentDescription"
