@@ -1,5 +1,6 @@
 from plone.indexer.decorator import indexer
 from zope.interface import Interface
+from AccessControl.unauthorized import Unauthorized
 
 def parse_shares(shares):
     res = []
@@ -15,5 +16,8 @@ def parse_shares(shares):
 
 @indexer(Interface)
 def sharing(obj):
-    return parse_shares(
-        obj.restrictedTraverse('@@sharing').existing_role_settings())
+    try:
+        return parse_shares(
+            obj.restrictedTraverse('@@sharing').existing_role_settings())
+    except Unauthorized, e:
+        pass
